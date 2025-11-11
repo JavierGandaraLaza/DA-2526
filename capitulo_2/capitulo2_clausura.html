@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Generated on 2025-10-28 mar 15:53 -->
+<meta charset="utf-8"/>
+<title>Abstracción de los datos</title>
+<meta name="author" content="Domingo Gómez Pérez"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/simple.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/zenburn.css"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Abstracción de los datos</h1><h2 class="author">Domingo Gómez Pérez</h2><p class="date">Created: 2025-10-28 mar 15:53</p>
+</section>
+<section>
+<section id="slide-1">
+<h2 id="1"><span class="section-number-2">1.</span> Definición de Clausura</h2>
+<p>
+La definición de clausura es la siguiente:
+Es la propiedad que el resultado de aplicar una operación entre dos
+elementos de un conjunto, también pertenece a ese conjunto y por tanto
+se puede seguir aplicando la misma operación entre los resultados.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-2">
+<h2 id="2"><span class="section-number-2">2.</span> Clausura</h2>
+<ul>
+<li>suma de números enteros</li>
+<li>suma de números racionales</li>
+<li><b><b>la creación de listas</b></b></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-3">
+<h2 id="3"><span class="section-number-2">3.</span> La función map</h2>
+<p>
+La función map es una función de orden superior que toma como
+argumentos
+</p>
+<ul>
+<li>una función f</li>
+<li>una lista L</li>
+<li>y devuelve una nueva lista L' donde cada elemento es el resultado de aplicar f a cada elemento de L.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-4">
+<h2 id="4"><span class="section-number-2">4.</span> Programación de map</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (map proc items)
+  (if (null? items)
+      nil
+      (cons (proc (car items))
+            (map proc (cdr items)))))
+
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-5">
+<h2 id="5"><span class="section-number-2">5.</span> Programación de reduce</h2>
+<p>
+La función reduce  es otra función de orden superior que 
+toma como argumentos
+</p>
+<ul>
+<li>una función f que tome dos argumentos (binaria)</li>
+<li>un valor inicial</li>
+<li>una lista L</li>
+<li>devuelve el resultado de aplicar la función acumulativamente a los elementos de la lista, de izquierda a derecha, para reducir la lista a un solo valor</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-6">
+<h2 id="6"><span class="section-number-2">6.</span> Programación de reduce</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (reduce f init lst)
+  (if (null? lst)
+      init
+      (reduce f (f init (car lst)) (cdr lst))))
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-7">
+<h2 id="7"><span class="section-number-2">7.</span> Aplicaciones de reduce</h2>
+<p>
+Multiplicar todos los elementos de una lista
+</p>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(reduce * 1 (list 1 2 3 4)) ; multiplicar todos los elementos
+(reduce *
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-8">
+<h2 id="8"><span class="section-number-2">8.</span> Programación de filter</h2>
+<p>
+La función filter es otra función de orden superior que toma como
+argumentos
+</p>
+<ul>
+<li>una función \(f\) que toma dos argumentos</li>
+<li>una lista</li>
+<li>devuelve una lista con los elementos \(x\) de la lista que dan
+verdadero \(f(x)\)</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-9">
+<h2 id="9"><span class="section-number-2">9.</span> Programación de filter</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (filter f lst)
+	(if (null? lst)
+	    nil
+	  (if (f (car lst))
+	    (cons (car lst) (filter f (cdr lst)))
+	    (filter f (cdr lst))
+	    )
+	  )
+	)
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-10">
+<h2 id="10"><span class="section-number-2">10.</span> SICP</h2>
+<p>
+SICP lo aborda como una serie de resultados que van de una etapa a la
+siguiente.
+</p>
+
+<p>
+Estas se acumulan a través de unos datos que van de una función a otra
+y como se manejan dentro de cada función
+</p>
+</section>
+</section>
+<section>
+<section id="slide-11">
+<h2 id="11"><span class="section-number-2">11.</span> SICP</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op 
+                      initial 
+                      (cdr sequence)))))
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-12">
+<h2 id="12"><span class="section-number-2">12.</span> Metodología DRY</h2>
+<p>
+En todos estos casos, las funciones son muy parecidas y 
+uno se plantea si no serán casos particulares de un método más general
+(ver el ejercicio 2.33)
+</p>
+</section>
+</section>
+<section>
+<section id="slide-13">
+<h2 id="13"><span class="section-number-2">13.</span> El operador quote</h2>
+<p>
+El operador \('\) se utiliza para dejar una expresión sin evaluar,
+introduciendo un nuevo tipo de dato: <b>el símbolo</b>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-14">
+<h2 id="14"><span class="section-number-2">14.</span> El operador quote</h2>
+<p>
+El operador \('\) se aplica recursivamente en las expresiones, que son
+tratadas como listas. Y estas expresiones se pueden volver a evaluar
+con la función <i>eval</i>
+</p>
+</section>
+</section>
+</div>
+</div>
+Hola
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'slide',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealHighlight ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

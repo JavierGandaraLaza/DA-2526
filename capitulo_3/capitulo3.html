@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Generated on 2025-11-11 mar 14:34 -->
+<meta charset="utf-8"/>
+<title>Programación Imperativa</title>
+<meta name="author" content="Domingo Gómez Pérez"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/simple.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/zenburn.css"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Programación Imperativa</h1><h2 class="author">Domingo Gómez Pérez</h2><p class="date">Created: 2025-11-11 mar 14:34</p>
+</section>
+<section>
+<section id="slide-1">
+<h2 id="1"><span class="section-number-2">1.</span> La asignación en Scheme</h2>
+<p>
+Hasta esta ahora, no hay forma de cambiar el valor de una variable:
+</p>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define a 23) ; no hay ningún problema
+
+(define a 24) ; assignment disallowed, cannot re-define...
+</code></pre>
+</div>
+
+<p>
+Es curioso que los primeros pasos de cualquier lenguajes es la
+asignación pero en programación funcional es lo último. 
+</p>
+</section>
+</section>
+<section>
+<section id="slide-2">
+<h2 id="2"><span class="section-number-2">2.</span> Reasignación</h2>
+<p>
+Cuando un símbolo esta definido, se puede cambiar su valor utilizando
+la función <i>set!</i>
+</p>
+
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define a 43)
+(set! a 44)
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-3">
+<h2 id="3"><span class="section-number-2">3.</span> Nuevo modelo de computación</h2>
+<p>
+La razón de que no se utilice la asignación es que no se puede incluir
+en la substitución, pero esto trae ventajas.
+</p>
+
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (crea-contador x)
+	(define (siguiente)
+		(set! x (+ x 1))
+		;; Incrementa el valor de x
+		x 			; Devolvemos x
+		)
+	siguiente
+)
+(define d (crea-contador 4))
+(d) 					; 5
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-4">
+<h2 id="4"><span class="section-number-2">4.</span> El concepto de ambiente</h2>
+<p>
+Un <b>ambiente</b> (<code>environment</code>) es una secuencia de <b>marcos</b> (<code>frames</code>). Cada <b>marco</b> es una tabla (posiblemente vacía) de asociaciones, que vinculan nombres de variables con sus valores correspondientes. El primer marco en la secuencia de ambientes es el marco más reciente, y el resto del ambiente se denomina el <b>ambiente envolvente</b> (<code>enclosing environment</code>).
+</p>
+</section>
+</section>
+<section>
+<section id="slide-5">
+<h2 id="5"><span class="section-number-2">5.</span> Ejemplo de uso (SICP)</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (make-account balance)
+    (define (withdraw amount)
+         (begin (set! balance (- balance amount))
+                 balance))
+
+    (define (deposit amount)
+         (begin (set! balance (+ balance amount))
+                balance))
+
+    (define (dispatch m)
+          (cond ((eq? m 'withdraw) withdraw)
+                ((eq? m 'deposit) deposit)))
+    dispatch)
+
+; Example
+
+
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-6">
+<h2 id="6"><span class="section-number-2">6.</span> Modelo de evaluación de ambientes</h2>
+<p>
+En este modelo de evaluación, existe un ambiente global y en ella se
+evaluan funciones, añadiendo las siguientes reglas: 
+</p>
+<ul>
+<li>Cada función tiene su ambiente local, que se crea cuando la función
+\(\lambda\) es evaluada. El ambiente incluye un link al ambiente donde
+fue creada.</li>
+<li>Cuando una  función es evaluada, se ligan las variables con los
+argumentos.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-7">
+<h2 id="7"><span class="section-number-2">7.</span> Modelo de evaluación de ambientes</h2>
+<ul>
+<li>Al evaluar una subexpresión, se utiliza las variables para mirar en
+el ambiente el valor de cualquier variable.</li>
+<li>El procedimiento para encontrar una variable en un ambiente es
+recorrer un <b>árbol</b></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-8">
+<h2 id="8"><span class="section-number-2">8.</span> Recapitulación</h2>
+<p>
+Cuando poniamos procedimientos internos, por ejemplo al definir la
+función <i>sqrt</i> hay dos ventajas:
+</p>
+<ul>
+<li>Los nombres de los procedimientos internos no son alterados por los
+procedimientos externos.</li>
+<li>Los procedimientos internos pueden acceder a las variables con las
+que se han definido.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-9">
+<h2 id="9"><span class="section-number-2">9.</span> </h2>
+</section>
+</section>
+</div>
+</div>
+Hola
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'slide',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealHighlight ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
