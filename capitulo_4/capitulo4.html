@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Generated on 2025-12-02 mar 16:38 -->
+<meta charset="utf-8"/>
+<title>Programación Dinámica</title>
+<meta name="author" content="Domingo Gómez Pérez"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/simple.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/zenburn.css"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Programación Dinámica</h1><h2 class="author">Domingo Gómez Pérez</h2><p class="date">Created: 2025-12-02 mar 16:38</p>
+</section>
+<section>
+<section id="slide-1">
+<h2 id="1"><span class="section-number-2">1.</span> Repaso a caminos mínimos en DAGs</h2>
+<div class="org-src-container">
+
+<pre><code class="dot" >  digraph{
+  S -&gt; {A,B};
+  A -&gt; {C,D};
+  B -&gt; {C,D};
+  C -&gt; E;
+  }
+</code></pre>
+</div>
+
+<div id="orgc52576e" class="figure">
+<p><img src="dag.png" alt="dag.png" />
+</p>
+<p><span class="figure-number">Figura 1: </span>Dag y caminos mínimos</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-2">
+<h2 id="2"><span class="section-number-2">2.</span> Pseudocódigo de caminos mínimos</h2>
+<div class="org-src-container">
+
+<pre><code class="java" >  camino_minimo(G,s):
+  // Inicializar todos los nodos con distancia infinita.
+  dist[s] = 0;
+  for(Nodo v:G.V)
+  {
+     for ((u,v): G.E)
+     {
+      dist[v] = min(dis[v], dist[u] + l(u,v));
+     }
+  }
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-3">
+<h2 id="3"><span class="section-number-2">3.</span> Propiedad estrella para poder aplicar programación dinámica</h2>
+<p>
+Se puede, de forma fácil, ordenar los subproblemas y partir estos en
+problemas más pequeños de forma que la solución a los subproblemas
+se pueda reconstruir en una solución total.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-4">
+<h2 id="4"><span class="section-number-2">4.</span> El problema de la secuencia creciente más larga</h2>
+<p>
+Dada una secuencia de números, tenemos que encontrar la subsecuencia
+creciente más larga que podamos.
+</p>
+<div class="org-src-container">
+
+<pre><code class="dot" >  digraph{
+  5 -&gt; 7;
+  2 -&gt; {3,7};
+  3 -&gt; {7};
+  }
+</code></pre>
+</div>
+
+<div id="orgf022ae5" class="figure">
+<p><img src="secuencia.png" alt="secuencia.png" />
+</p>
+<p><span class="figure-number">Figura 2: </span>Ejemplo de secuencia 5,2,3,7,1 y su modelización como grafo</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-5">
+<h2 id="5"><span class="section-number-2">5.</span> Pseudocódigo basado en programación dinámica</h2>
+<div class="org-src-container">
+
+<pre><code class="java" >  LIS(S):
+  L = new int[S.length];
+  for (int i=0; i&lt;L.length; i++)
+  {
+    for(int j=0; j&lt;i; j++)
+    {
+      if (S[i]&lt;S[j])
+        L[j] = 1+ max(L[i],L[j]);
+    }
+  }
+  return max(L);
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-6">
+<h2 id="6"><span class="section-number-2">6.</span> Por que no hemos hecho el algoritmo recursivo</h2>
+<div class="org-src-container">
+
+<pre><code class="java" >  calcular_L_i(S, i):
+  if (i==0)
+    return 1;
+  int L = 0;
+  for(int j =0; j&lt;i; j++)
+  {
+    if (S[j]&lt;S[i])
+      L = 1 + max(L, calcular_L_i(S,j));
+  }
+  return L;
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-7">
+<h2 id="7"><span class="section-number-2">7.</span> La distancia de edición</h2>
+<p>
+Dada dos palabras, se define la <b>distancia de edición</b> como el mínimo
+número de ediciones que hay que hacer para transformar una palabra
+en la otra. Una <b>edición</b> puede ser cualquiera de las siguientes
+operaciones:
+</p>
+<ul>
+<li>sustituir una letra.</li>
+<li>borrar una letra.</li>
+<li>insertar una letra.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-8">
+<h2 id="8"><span class="section-number-2">8.</span> Algoritmo para hallar la distancia de edición</h2>
+<p>
+Sean \(x,y\) dos cadenas de caracteres y denotemos por \(E_{ij}\) la
+distancia de edición de los primeros \(i\) caracteres de \(x\) y los \(j\)
+primeros caracteres de \(y\). ¿Cómo podemos calcularlo?
+</p>
+</section>
+</section>
+<section>
+<section id="slide-9">
+<h2 id="9"><span class="section-number-2">9.</span> Traza del algoritmo con las palabras ESTO, ROPA.</h2>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">i/j</th>
+<th scope="col" class="org-right">R</th>
+<th scope="col" class="org-right">O</th>
+<th scope="col" class="org-right">P</th>
+<th scope="col" class="org-right">A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">E</td>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-left">S</td>
+<td class="org-right">2</td>
+<td class="org-right">2</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-left">T</td>
+<td class="org-right">3</td>
+<td class="org-right">3</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+</tr>
+
+<tr>
+<td class="org-left">O</td>
+<td class="org-right">4</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+<td class="org-right">4</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-10">
+<h2 id="10"><span class="section-number-2">10.</span> El DAG oculto</h2>
+<div class="org-src-container">
+
+<pre><code class="dot" >  digraph{
+  E11 -&gt; {E12,E21,E22};
+  E21 -&gt; {E22,E31,E32};
+  E31 -&gt; {E32,E41,E42};
+  E12 -&gt; {E22,E13,E23};
+  E22 -&gt; {E32,E23,E33};
+  E32 -&gt; {E42,E33,E43};
+  E42 -&gt; {E43};
+  E41 -&gt; {E42};
+  E13 -&gt; {E23,E14,E24};
+  E23 -&gt; {E33,E24,E34};
+  E33 -&gt; {E43,E34,E44};
+  E43 -&gt; {E44};
+  E14 -&gt; {E24};
+  E24 -&gt; {E34};
+  E34 -&gt; E44;
+  }
+</code></pre>
+</div>
+
+<div id="org4a56b3c" class="figure">
+<p><img src="grafo_dag.png" alt="grafo_dag.png" />
+</p>
+<p><span class="figure-number">Figura 3: </span>DAG oculto</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-11">
+<h2 id="11"><span class="section-number-2">11.</span> El DAG oculto</h2>
+<p>
+El DAG oculto se genera a partir de los subproblemas. Las llamadas
+que se hacen y los problemas que se resuelven hacen que la solución
+sea más efectiva o menos.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-12">
+<h2 id="12"><span class="section-number-2">12.</span> El problema de la mochila</h2>
+<p>
+Suponemos que tenemos una mochila donde podemos meter hasta 15
+kilos, y tenemos los siguiente items:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">Item</th>
+<th scope="col" class="org-right">peso</th>
+<th scope="col" class="org-right">valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">13</td>
+<td class="org-right">50</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">11</td>
+<td class="org-right">40</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">8</td>
+<td class="org-right">35</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">7</td>
+<td class="org-right">30</td>
+</tr>
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-right">3</td>
+<td class="org-right">15</td>
+</tr>
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-right">2</td>
+<td class="org-right">5</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-right">&nbsp;</td>
+<td class="org-right">&nbsp;</td>
+<td class="org-right">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-13">
+<h2 id="13"><span class="section-number-2">13.</span> Dos versiones del problema de la mochila</h2>
+<ul>
+<li>Con repetición.</li>
+<li>Sin repetición.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-14">
+<h2 id="14"><span class="section-number-2">14.</span> El problema de la mochila con repetición</h2>
+<p>
+Sea \(K(W)\) el valor óptimo de la mochila con restricción de peso
+\(W\), entonces se tiene:
+\[
+  K(W) = \max\{K(W-w_i) + v_i\}.
+  \]
+</p>
+</section>
+</section>
+<section>
+<section id="slide-15">
+<h2 id="15"><span class="section-number-2">15.</span> Pregunta</h2>
+<p>
+El dag del problema de la mochila, ¿a qué problema es equivalente en
+los DAGs?
+</p>
+</section>
+</section>
+<section>
+<section id="slide-16">
+<h2 id="16"><span class="section-number-2">16.</span> El problema de la mochila sin repetición</h2>
+<p>
+Se define la siguiente cantidad:
+\[
+  K(W,j) = \text{máximo valor utilizando solamente los items de
+  1 a j sin repetir}.
+  \]
+</p>
+</section>
+</section>
+<section>
+<section id="slide-17">
+<h2 id="17"><span class="section-number-2">17.</span> El problema de la mochila sin repetición</h2>
+<p>
+\[
+  K(W,j) = \max\{K(W-w_j,j-1)+ v_j,K(W,j-1)\}.
+  \]
+</p>
+</section>
+</section>
+<section>
+<section id="slide-18">
+<h2 id="18"><span class="section-number-2">18.</span> Interludio: Memoization</h2>
+<p>
+<b>Memoization</b> es  una técnica que, lo que hace es guardar en memoria
+ resultados intermedios para no tener que calcularlos.
+</p>
+
+<div class="org-src-container">
+
+<pre><code class="java" >  Knapsack(w):
+  if w in hash_table: return hash_table(w)
+  K(w) = max(K(w-w_i)+ v_i: w_i&lt;=w)
+  insert w in hash_table
+  return K(w)
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-19">
+<h2 id="19"><span class="section-number-2">19.</span> Interludio: Memoization</h2>
+<div class="org-src-container">
+
+<pre><code class="dot" >  digraph{
+  nodo0 [label="K(7)"];
+  nodo1 [label="K(6)"];
+  nodo2 [label="K(5)"];
+  nodo3 [label="K(4)"];
+  nodo4 [label="K(4)"];
+  nodo5 [label="K(5)"];
+  nodo0 -&gt; {nodo1,nodo2};
+  nodo1 -&gt; {nodo5,nodo3};
+  nodo2 -&gt; nodo4;
+  }
+</code></pre>
+</div>
+
+<div id="org124eee8" class="figure">
+<p><img src="recursion.png" alt="recursion.png" />
+</p>
+<p><span class="figure-number">Figura 4: </span>Árbol parcial de llamadas</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-20">
+<h2 id="20"><span class="section-number-2">20.</span> Pregunta</h2>
+<p>
+Suponer que, nos dan un grafo y nos piden que hallemos los caminos
+más cortos con la restricción de que los cáminos tienen que tener
+menos de \(\ell\) aristas, rellenar la siguiente propiedad:
+\[
+  dist(v,i) = \dots
+  \]
+¿Cúal es el valor que debemos poner con \(dist(v,0)\)?
+</p>
+</section>
+</section>
+<section>
+<section id="slide-21">
+<h2 id="21"><span class="section-number-2">21.</span> Hallar cáminos mínimos entre cualquier par de vértices</h2>
+<p>
+Idea:
+</p>
+<ul>
+<li>Calcular los cáminos mínimos sólo utilizando ejes directos.</li>
+<li>Ir permitiendo nodos intermedios a cada paso.</li>
+<li>Cuando todos los nodos sean permitidos como intermedios, hemos
+acabado.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-22">
+<h2 id="22"><span class="section-number-2">22.</span> El algoritmo de Floyd-Warshall</h2>
+<p>
+Definid \(dist(i,j,k)\) sea la distancia mínima de \(i\) a \(j\) pasando
+por nodos intermedios \(1,\ldots, k\). Ahora, la recursión es
+\[
+  dist(i,j,k) = \min\{dist(i,\ell,k-1)+dist(\ell,j,1),dist(i,j,k-1)\}
+  \]
+</p>
+</section>
+</section>
+<section>
+<section id="slide-23">
+<h2 id="23"><span class="section-number-2">23.</span> Cantidad de memoria necesaria</h2>
+<p>
+La cantidad de memoria necesaria es a lo sumo:
+</p>
+<ul>
+<li>La memoria es, a lo sumo, proporcional al tamaño del DAG.</li>
+<li>Muchas veces, se puede reducir porque cuando solo es necesario
+guardar los subproblemas necesarios.
+<ul>
+<li>En Floyd-Warshall la memoria necesaria es \(O(|V|^2)\)</li>
+<li>Para hallar la distancia de edición es proporcional a la
+longitud de la palabra más corta.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-24">
+<h2 id="24"><span class="section-number-2">24.</span> El problema del conjunto independiente</h2>
+<p>
+Dado un grafo, se llama un conjunto independiente es un conjunto de
+nodos que no tienen un eje entre ellos.
+</p>
+
+<div class="org-src-container">
+
+<pre><code class="dot" >  graph{
+  nodo1 [label="a",color="red"];
+  nodo2 [label="b",color="red"];
+  nodo1 -- {d,c};
+  nodo2 -- {d,c};
+  }
+</code></pre>
+</div>
+
+<div id="orgd285fbc" class="figure">
+<p><img src="independiente.png" alt="independiente.png" />
+</p>
+<p><span class="figure-number">Figura 5: </span>Ejemplo de grafo con un conjunto independiente</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-25">
+<h2 id="25"><span class="section-number-2">25.</span> El problema del conjunto independiente (en árboles)</h2>
+<p>
+Sea \(I(u)\) el tamaño máximo de un conjunto independiente, entonces
+tenemos:
+</p>
+<ul>
+<li>el tamaño del conjunto independiente es el mismo que el máximo de
+los conjuntos independientes de los hijos.</li>
+<li>el tamaño del conjunto independiente es uno más que el máximo de
+los conjuntos independientes de los nietos.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-26">
+<h2 id="26"><span class="section-number-2">26.</span> El problema del conjunto independiente (en árboles)</h2>
+<div class="org-src-container">
+
+<pre><code class="dot" >  digraph{
+  a -&gt;{b,c,d};
+  b -&gt;{e,f,g,h};
+  c -&gt;{m,l,n,o,p};
+  }
+</code></pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+Hola
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'slide',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealHighlight ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

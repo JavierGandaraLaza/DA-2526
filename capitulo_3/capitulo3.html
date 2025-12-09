@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Generated on 2025-11-11 mar 14:34 -->
+<!-- Generated on 2025-11-18 mar 16:37 -->
 <meta charset="utf-8"/>
 <title>Programación Imperativa</title>
 <meta name="author" content="Domingo Gómez Pérez"/>
@@ -18,7 +18,7 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1 class="title">Programación Imperativa</h1><h2 class="author">Domingo Gómez Pérez</h2><p class="date">Created: 2025-11-11 mar 14:34</p>
+<h1 class="title">Programación Imperativa</h1><h2 class="author">Domingo Gómez Pérez</h2><p class="date">Created: 2025-11-18 mar 16:37</p>
 </section>
 <section>
 <section id="slide-1">
@@ -155,13 +155,61 @@ función <i>sqrt</i> hay dos ventajas:
 procedimientos externos.</li>
 <li>Los procedimientos internos pueden acceder a las variables con las
 que se han definido.</li>
+<li>Esto permite la modularización</li>
 
 </ul>
 </section>
 </section>
 <section>
 <section id="slide-9">
-<h2 id="9"><span class="section-number-2">9.</span> </h2>
+<h2 id="9"><span class="section-number-2">9.</span> Desventajas del modelo de evaluación</h2>
+<ul>
+<li>Se introduce un ambiente, y la ejecución del programa puede afectar
+a cosas fuera de su ambiente</li>
+<li>El orden de ejecución hace que los resultados cambien</li>
+<li>Se introduce la idea de compartir y la idea de igualdad</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-10">
+<h2 id="10"><span class="section-number-2">10.</span> Orden de evaluación</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define (factorial n)
+	(let ((product 1)
+              (counter 1))
+	  (define (iter)
+		  (if (&gt; counter n)
+		      product
+		    (begin
+		     (set! counter (+ counter 1))
+		     (set! product (* counter 
+				      product))
+		     
+                     (iter))))
+	  (iter)))
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-11">
+<h2 id="11"><span class="section-number-2">11.</span> Compartiendo valores</h2>
+<div class="org-src-container">
+
+<pre><code class="emacs-lisp" >(define x (mcons 'a 'b))
+(define z1 (mcons x x))
+
+(set-mcar! x 'wow) ; (mcons (mcons 'wow 'b) (mcons 'wow 'b))
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-12">
+<h2 id="12"><span class="section-number-2">12.</span> </h2>
 </section>
 </section>
 </div>

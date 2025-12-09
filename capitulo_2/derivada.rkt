@@ -14,6 +14,11 @@
           (make-product 
            (deriv (multiplier exp) var)
            (multiplicand exp))))
+        ((potencia? exp)
+         (make-product (exponente exp)
+                       (make-product
+                        (make-potencia (funcion exp) (- (exponente exp) 1))
+                        (deriv (funcion exp) var))))
         (else (error "unknown expression 
                       type: DERIV" exp))))
 
@@ -27,6 +32,17 @@
        (variable? v2)
        (eq? v1 v2)))
 
+(define (potencia? exp) ; Las potencias exp= (** f n)
+  (and (pair? exp) (eq? (car exp) '**) (number? (car (cdr (cdr exp))))))
+
+(define (make-potencia exp n)
+  (list '(** exp n)))
+
+(define (exponente exp)
+  (car (cdr (cdr exp))))
+(define (funcion exp)
+  (car (cdr exp)))
+  
 (define (make-sum a1 a2) (list '+ a1 a2))
 (define (make-product m1 m2) (list '* m1 m2))
 (define (sum? x)
